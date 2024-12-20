@@ -60,6 +60,23 @@ app.UseResponseCompression();
 
 app.UseStaticFiles();
 
+var info = new FileInfo(Path.Combine("wwwroot", "index.html"));
+
+app.Use((async (context, next) =>
+{
+    await next(context);
+
+    if (context.Response.StatusCode == 404)
+    {
+        context.Response.StatusCode = 200;
+
+        if (info.Exists)
+        {
+            await context.Response.SendFileAsync(Path.Combine("wwwroot", "index.html"));
+        }
+    }
+}));
+
 app.UseEndpoints(endpoints =>
 {
     // Add BaGet's endpoints.
