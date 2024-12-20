@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using NuGet.Next.Core;
+using NuGet.Next.Filter;
 using NuGet.Next.Options;
 using NuGet.Next.Protocol.Models;
 
@@ -11,7 +12,8 @@ public static class ApiExtensions
     {
         var options = app.ServiceProvider.GetRequiredService<NuGetNextOptions>();
 
-        var group = app.MapGroup(options.PathBase ?? "/");
+        var group = app.MapGroup(options.PathBase ?? "/")
+            .AddEndpointFilter<ExceptionFilter>();
 
 
         group.Map("/v3/package/{id}/index.json",
@@ -194,14 +196,14 @@ public static class ApiExtensions
                 async ([FromServices] UserKeyApis apis, string id) =>
                 await apis.EnableAsync(id))
             .WithOpenApi();
-        
+
         var panel = group.MapGroup("api/v3/panel");
 
         panel.MapGet(string.Empty,
                 async ([FromServices] PanelApi apis) =>
                 await apis.GetAsync())
             .WithOpenApi();
-        
+
         return app;
     }
 }

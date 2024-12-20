@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Http.Features;
 using NuGet.Next;
 using NuGet.Next.Converters;
 using NuGet.Next.Extensions;
-using NuGet.Next.Middlewares;
 using NuGet.Next.Service;
 
 Directory.SetCurrentDirectory(AppDomain.CurrentDomain.BaseDirectory);
@@ -56,8 +55,6 @@ if (app.Environment.IsDevelopment())
 await app.MigrateDatabase();
 
 app.Configure(builder.Environment, builder.Configuration);
-
-app.UseMiddleware<ExceptionMiddleware>();
 
 app.UseResponseCompression();
 
