@@ -64,9 +64,20 @@ var info = new FileInfo(Path.Combine("wwwroot", "index.html"));
 
 app.Use((async (context, next) =>
 {
+    if (context.Request.Path == "/")
+    {
+        if (info.Exists)
+        {
+            await context.Response.SendFileAsync(Path.Combine("wwwroot", "index.html"));
+        }
+
+        return;
+    }
+
     await next(context);
 
-    if (context.Response.StatusCode == 404)
+    if (context.Response.StatusCode == 404 && context.Request.Path.StartsWithSegments("/v3") &&
+        context.Request.Path.StartsWithSegments("/api"))
     {
         context.Response.StatusCode = 200;
 
